@@ -132,8 +132,7 @@ def main():
     amigos_list = get_amigos(participantes)
     id_sorteo = hex(int(time.time()))[-8:]
 
-    for amigos in amigos_list:
-        amigo_a, amigo_b = amigos
+    for amigo_a, amigo_b in amigos_list:
         html, txt = gen_content(amigo_a, amigo_b, id_sorteo)
         subject = 'Sorteo de amigo invisible!'
         print('Enviando mail a %s <%s>' % (amigo_a, mails[amigo_a]))

@@ -26,40 +26,33 @@ mails = {'Ye': 'yesica@test.com',
          'Simon': 'guau@test.com',
          'Frida': 'miau@test.com'}
 
-
-def get_amigo(amigo_a, participantes, tmp_participantes):
-    amigo_b = random.choice(tmp_participantes)
-    count = 0
-    while (amigo_a, amigo_b) in participantes or (amigo_b, amigo_a) in participantes:
-        if count > len(participantes):
-            return None
-        if len(tmp_participantes) == 1:
-            return None
-        amigo_b = random.choice(tmp_participantes)
-        count += 1
-    return(amigo_a, amigo_b)
-
 def get_amigos(participantes):
-    l_participantes = list(chain(*participantes))
-    random.shuffle(l_participantes)
-    tmp_participantes = l_participantes.copy()
-    l_amigos = list()
+    amigos = list()
+    participantes_list = list(chain(*participantes))
+    receptores = participantes_list.copy()
+    
+    try:
+        for p in participantes_list:
+            # lista reducida de receptores
+            my_receptores = receptores.copy()
+            # obtengo pareja
+            pareja = [item for item in participantes if p in item]
+            pareja = pareja[0]
 
-    for participante in l_participantes:
-        if not tmp_participantes:
-            break
-        else:
-            amigo_a = tmp_participantes.pop()
-            par = get_amigo(amigo_a, participantes, tmp_participantes)
-            # no se pudo encontrar un par porque seguramente los ultimos dos de la lista son pareja.
-            # se comienza de nuevo.
-            if not par:
-                return get_amigos(participantes)
-            else:
-                l_amigos.append(par)
-                tmp_participantes.remove(par[1])
-    return l_amigos
+            #saco a uno mismo y la pareja
+            if pareja[0] in my_receptores:
+                my_receptores.remove(pareja[0])
+            if pareja[1] in my_receptores:
+                my_receptores.remove(pareja[1])
 
+            amigo = random.choice(my_receptores)
+
+            amigos.append((p, amigo))
+            receptores.remove(amigo)
+
+    except Exception:
+        amigos = get_amigos(participantes)
+    return amigos
 
 def send_mail(address, subject, html_content, text_content):
     # stdout.write(

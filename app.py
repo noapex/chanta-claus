@@ -122,18 +122,17 @@ def send_email(address, subject, html_content, text_content):
 
 def main():
     # lista de tuplas con los pares de amigos
-    amigos_list = get_amigos(participantes)
+    amigos = get_amigos(participantes)
     id_sorteo = hex(int(time.time()))[-8:]
+    amigos_list = list(chain(*participantes))
 
-    for amigo_a, amigo_b in amigos_list:
+    for amigo_a in amigos_list:
+        amigo_b = [item[1] for item in amigos if amigo_a == item[0]]
+        amigo_b = amigo_b[0]
         html, txt = gen_content(amigo_a, amigo_b, id_sorteo)
         subject = 'Sorteo de amigo invisible!'
         print('Enviando mail a %s <%s>' % (amigo_a, mails[amigo_a]))
-        send_email(mails[amigo_a], subject, html, txt)
-        print('Enviando mail a %s <%s>' % (amigo_b, mails[amigo_b]))
-        html, txt = gen_content(amigo_b, amigo_a, id_sorteo)
-        send_email(mails[amigo_b], subject, html, txt)
-    
+        send_mail(mails[amigo_a], subject, html, txt)
 
 if __name__ == "__main__":
     main()

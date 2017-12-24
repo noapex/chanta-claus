@@ -38,12 +38,19 @@ def get_amigos(participantes):
             # obtengo pareja
             pareja = [item for item in participantes if p in item]
             pareja = pareja[0]
-
-            #saco a uno mismo y la pareja
-            if pareja[0] in my_receptores:
-                my_receptores.remove(pareja[0])
-            if pareja[1] in my_receptores:
-                my_receptores.remove(pareja[1])
+          
+            # pareja
+            if len(pareja) == 2:
+                #saco a uno mismo y la pareja
+                if pareja[0] in my_receptores:
+                    my_receptores.remove(pareja[0])
+                if pareja[1] in my_receptores:
+                    my_receptores.remove(pareja[1])
+                    
+            # solapa
+            else:
+                if pareja[0] in my_receptores:
+                    my_receptores.remove(pareja[0])
 
             amigo = random.choice(my_receptores)
 

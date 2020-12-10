@@ -8,14 +8,14 @@ import time
 import requests
 
 
-participantes = [('Ye', 'Rami'),
+participantes = [('Rami', 'Ile'),
                  ('Lu', 'Fer'),
                  ('Juli', 'Pablo'),
                  ('Edit', 'Hora'),
-                 ('Simon',)
-                 ('Frida',)]
+                 ('Simon', None)
+                 ('Frida', None)]
 
-mails = {'Ye': 'yesica@test.com',
+mails = {'Ile': 'ile@test.com',
          'Rami': 'ramiro@test.com',
          'Lu': 'lu@test.com',
          'Fer': 'fer@test.com',
@@ -26,40 +26,30 @@ mails = {'Ye': 'yesica@test.com',
          'Simon': 'guau@test.com',
          'Frida': 'miau@test.com'}
 
+
 def get_amigos(participantes):
+    receptores = [p for p in chain(*[p for p in participantes if p]) if p]
+    cant_participantes = len(receptores)
     amigos = list()
-    participantes_list = list(chain(*participantes))
-    receptores = participantes_list.copy()
-    
-    try:
-        for p in participantes_list:
-            # lista reducida de receptores
-            my_receptores = receptores.copy()
-            # obtengo pareja
-            pareja = [item for item in participantes if p in item]
-            pareja = pareja[0]
-          
-            # pareja
-            if len(pareja) == 2:
-                #saco a uno mismo y la pareja
-                if pareja[0] in my_receptores:
-                    my_receptores.remove(pareja[0])
-                if pareja[1] in my_receptores:
-                    my_receptores.remove(pareja[1])
-                    
-            # solapa
-            else:
-                if pareja[0] in my_receptores:
-                    my_receptores.remove(pareja[0])
-
-            amigo = random.choice(my_receptores)
-
-            amigos.append((p, amigo))
-            receptores.remove(amigo)
-
-    except Exception:
-        amigos = get_amigos(participantes)
+    for pareja in participantes:
+        for p in pareja:
+            # si para alguno la pareja es None (ha pasao)
+            if not p:
+                continue
+            matched = False
+            count = 0
+            while not matched:
+                # si itero más veces que la cant de participantes es porque me quedaron solo opciones inválidas (pareja)
+                if count > cant_participantes:
+                    return get_amigos(participantes)
+                amigo = random.choice(receptores)
+                count += 1
+                if amigo and amigo not in pareja and amigo in receptores:
+                    matched = True
+                    amigos.append((p, amigo))
+                    receptores.remove(amigo)
     return amigos
+
 
 def send_mail(address, subject, html_content, text_content):
     # stdout.write(
